@@ -8,19 +8,17 @@
  * Author URI:   https://openstudios.xyz
  */
 
-// Hook to enqueue admin scripts
-add_action('admin_enqueue_scripts', 'euclid_enqueue_admin_scripts');
+ function euclid_enqueue_media_edit_js($hook) {
 
-function euclid_enqueue_admin_scripts($hook) {
-    // Only load on Media Library / Media Edit screens
-    if ( $hook === 'upload.php' || $hook === 'media-new.php' ) {
-
+    // Only load on the attachment edit screen
+    if ($hook === 'upload.php' && isset($_GET['mode']) && $_GET['mode'] === 'edit') {
         wp_enqueue_script(
-            'euclid-admin-js', // Handle
-            plugin_dir_url(__FILE__) . 'js/admin.js', // Path to JS file
-            array('jquery'), // Dependencies
-            '1.0', // Version
-            true // Load in footer
+            'euclid-app-bootstrap',
+            plugin_dir_url(__FILE__) . 'js/admin.js',
+            ['jquery'],
+            '1.0',
+            true
         );
     }
 }
+add_action('admin_enqueue_scripts', 'euclid_enqueue_media_edit_js');

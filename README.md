@@ -2,6 +2,8 @@
 
 **Euclid** converts raster images (PNG, JPG) into clean, scalable SVGs directly in WordPress. Designed for designers, creators, and print workflows, Euclid makes it easy to generate vector graphics without leaving your site.
 
+Extends native wp-admin/js/image-edit.js
+
 ## Features
 
 - Convert logos, icons, or any raster images to SVG format.

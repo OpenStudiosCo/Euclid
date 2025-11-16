@@ -1,31 +1,33 @@
-const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
-(function($){
-    $(document).ready(function(){
-        if ( wp?.media?.view?.Attachment?.Details?.TwoColumn ) {
-            wp.media.view.Attachment.Details.TwoColumn = wp.media.view.Attachment.Details.TwoColumn.extend( {
-                render() {
-                    wp.media.view.Attachment.Details.prototype.render.apply( this, arguments );
+jQuery(function($) {
+    $( document ).on( 'image-editor-ui-ready', () => {
+        // Add our Convert to Vector button
+        const cropButton = $('.imgedit-crop');
+        const convertBtn = $('<button class="button convert-to-vector">Convert to Vector</button>');
+        cropButton.after(convertBtn);
 
-                    var convertButton = $('<button class="button convert-to-vector">Convert to vector</button>');
-                    console.log(this);
-                     
-                    debugger;
+        convertBtn.on('click', function(e) {
+            e.preventDefault();
 
-                    // // Add button to the "Edit Image" section
-                    // this.$el.find('.imgedit-menu').prepend(convertButton);
+            const euclidContainer = $('#imgedit-euclid');
+            euclidContainer.addClass('imgedit-panel-active');
+        });
 
-                    // // Click handler
-                    // convertButton.on('click', function(e){
-                    //     e.preventDefault();
-                    //     var attachmentId = this.model.get('id');
-                    //     alert('You clicked Convert to Vector for image ID ' + attachmentId);
-                    //     // Here you can trigger your conversion AJAX call
-                    // }.bind(this));
-    
-                    return this;
-                }
-            } );
-        }
+        const toolArea = $('.imgedit-tool-active');
+
+            
+        // Add the preview to the sidebar.
+        const preview = $(
+            `<div class="imgedit-group" id="imgedit-euclid">
+                <div class="imgedit-group-controls">
+                    <div class="imgedit-crop-wrap"></div>
+                    <h2>Crop Settings</h2>
+                    <p>Aspect ratio fields here</p>
+                </div>
+            </div>`);
+        toolArea.append(preview);
+
+
+
     });
-})(jQuery);
+});
