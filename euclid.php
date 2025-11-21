@@ -10,8 +10,8 @@
 
  function euclid_enqueue_media_edit_js($hook) {
 
-    // Only load on the attachment edit screen
-    if ($hook === 'upload.php' && isset($_GET['mode']) && $_GET['mode'] === 'edit') {
+    
+    if ( $hook === 'upload.php' ) {
         wp_enqueue_script(
             'euclid-app-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
