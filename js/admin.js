@@ -10,7 +10,7 @@ jQuery(function($) {
             e.preventDefault();
 
             const euclidContainer = $('#imgedit-euclid');
-            euclidContainer.addClass('imgedit-panel-active');
+            euclidContainer.toggleClass('imgedit-panel-active');
         });
 
         const toolArea = $('.imgedit-tool-active');
