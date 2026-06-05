@@ -1,22 +1,11 @@
+let euclidActive = false;
+
 jQuery(function ($) {
 
     // Modal (Media Library)
     $(document).on("image-editor-ui-ready", () => {
         euclid_init($);
     });
-
-    // Uncomment and figure out why this breaks the modal;
-    // // Edit Media screen fallback
-    // const observer = new MutationObserver(() => {
-    //     if ($(".imgedit-wrap").length) {
-    //         euclid_init($);
-    //     }
-    // });
-
-    // observer.observe(document.body, {
-    //     childList: true,
-    //     subtree: true,
-    // });
 });
 
 function euclid_init($) {

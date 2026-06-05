@@ -10,7 +10,7 @@
 
 function euclid_enqueue_media_edit_js($hook) {
 
-    if ( $hook === 'upload.php' ) {
+    if (in_array($hook, ['upload.php', 'post.php', 'post-new.php'])) {
 
         wp_enqueue_style(
             'euclid-admin-styles',
