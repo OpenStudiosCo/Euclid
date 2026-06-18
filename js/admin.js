@@ -38,7 +38,7 @@ window.euclid.init = ($) => {
     previewArea.append(preview);
 
     const tools = $(
-        `<div class="imgedit-group imgedit-euclid">
+        `<div id="euclid-container" class="imgedit-group imgedit-euclid">
           <div class="imgedit-group-controls">
             <h2>Preview Layout</h2>
             <p>
@@ -52,7 +52,11 @@ window.euclid.init = ($) => {
                 <button disabled class="button">Download SVG</button>
             </p>
             <h2>Vectorisation Settings</h2>
-            <p>Aspect ratio fields here</p>
+            Method:
+            <select id="euclid-vectorisation-method">
+                <option value="potrace">Potrace</option>
+                <option value="imagetracer" selected>ImageTracer</option>
+            </select>
           </div>
         </div>`,
     );
@@ -93,4 +97,11 @@ window.euclid.save = function () {
             alert("Error saving SVG");
         },
     });
+}
+
+window.euclid.changeMethod = function () {
+    const method = $("#euclid-vectorisation-method").val();
+    if (method === "imagetracer") {
+        
+    }
 }

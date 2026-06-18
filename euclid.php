@@ -29,9 +29,17 @@ function euclid_enqueue_media_edit_js($hook) {
         );
 
         wp_enqueue_script(
+             'euclid-libs-imagetracer',
+             plugin_dir_url(__FILE__) . 'vendor/imagetracer_v1.2.6.js',
+             ['jquery'],
+             '1.0',
+             true
+        );
+
+        wp_enqueue_script(
             'euclid-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
-            ['jquery', 'euclid-libs-potrace'],
+            ['jquery', 'euclid-libs-potrace', 'euclid-libs-imagetracer'],
             '1.0',
             true
         );
