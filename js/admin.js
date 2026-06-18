@@ -48,7 +48,7 @@ window.euclid.init = ($) => {
             </p>
             <h2>Output Options</h2>
             <p>
-                <button class="button">Save SVG</button>
+                <button onclick="window.euclid.save()" class="button">Save SVG</button>
                 <button disabled class="button">Download SVG</button>
             </p>
             <h2>Vectorisation Settings</h2>
@@ -69,5 +69,28 @@ window.euclid.init = ($) => {
         var svg = Potrace.getSVG(1);
         const previewBox = $(".imgedit-crop-preview");
         previewBox.html(svg);
+    });
+}
+
+window.euclid.save = function () {
+
+    const svg = Potrace.getSVG(1);
+
+    jQuery.ajax({
+        url: ajaxurl,
+        method: "POST",
+        data: {
+            action: "euclid_save_svg",
+            svg: svg,
+            attachment_id: imageEdit.postid,
+        },
+        success: function (res) {
+            console.log("Saved:", res);
+            alert("SVG created in Media Library");
+        },
+        error: function (err) {
+            console.error(err);
+            alert("Error saving SVG");
+        },
     });
 }
