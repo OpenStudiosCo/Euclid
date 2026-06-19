@@ -1,3 +1,9 @@
+/**
+  * Potrace integration.
+  *
+  * Manages all app elements relating to Potrace functionality.
+  */
+
 export default class PotraceIntegration {
   constructor(app) {
     // *     Potrace API parameters:
