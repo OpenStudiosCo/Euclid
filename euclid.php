@@ -36,7 +36,7 @@ function euclid_enqueue_media_edit_js($hook) {
              true
         );
 
-        wp_enqueue_script(
+        wp_enqueue_script_module(
             'euclid-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
             ['jquery', 'euclid-libs-potrace', 'euclid-libs-imagetracer'],
