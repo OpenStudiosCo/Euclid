@@ -8,8 +8,8 @@ export default class Tools {
             <p>
                 Method:
                 <select id="euclid-vectorisation-method" onchange="window.euclid.changeMethod()">
-                    <option value="potrace">Black and White</option>
-                    <option value="imagetracer" selected>Colour</option>
+                    <option value="potrace" selected>Black and White</option>
+                    <option value="imagetracer">Colour</option>
                 </select>
             </p>
             <p>

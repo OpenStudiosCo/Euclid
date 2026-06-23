@@ -1,5 +1,6 @@
 
 // Integrations
+import ImagetracerIntegration from "./integrations/ImagetracerIntegration.js";
 import PotraceIntegration from "./integrations/PotraceIntegration.js";
 
 // UI
@@ -34,11 +35,17 @@ window.euclid.init = ($) => {
     window.euclid.preview = new PreviewArea($);
     window.euclid.tools   = new Tools($);
 
+    // Imagetracer integration
+    window.euclid.imagetracer = new ImagetracerIntegration($);
+
     // Potrace integration
     window.euclid.potrace = new PotraceIntegration($);
 
     // Source image.
     window.euclid.src = $(".imgedit-crop-wrap img").attr("src");
+
+    // Initialise the preview area by setting the method.
+    window.euclid.changeMethod();
 
 }
 

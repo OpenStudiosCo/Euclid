@@ -1,4 +1,4 @@
-export default class PotraceIntegration {
+export default class PreviewArea {
   constructor($) {
 
     // Add the preview to the sidebar.
@@ -19,7 +19,7 @@ export default class PotraceIntegration {
 
   loadSVG() {
       if (window.euclid.method === "imagetracer") {
-          console.log('Imagetracer TBD!');
+          window.euclid.imagetracer.preview();
       }
       else {
           window.euclid.potrace.preview();
