@@ -2,10 +2,11 @@
 
 /**
  * Plugin Name:  Euclid
- * Description:  Converts raster images into clean, Scalable Vector Graphics (SVG) files.
+ * Description:  Convert raster images into clean SVGs inside WordPress.
  * Version:      1.0.0
  * Author:       Open Studios
- * Author URI:   https://openstudios.xyz
+ * License:      GPLv2 or later
+ * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 function euclid_enqueue_media_edit_js($hook) {

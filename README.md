@@ -10,8 +10,6 @@ Extends native wp-admin/js/image-edit.js
 - Optimized output for web or print.
 - Admin-friendly interface integrated with the WordPress Media Library.
 - Privacy-first: all conversions happen in-browser or on your server—no third-party API required.
-- Optional batch conversion (convert multiple images at once).
-- WooCommerce integration (Premium): allow customers to upload images and customize vectorization for print-on-demand products.
 
 ## Use Cases
 
@@ -27,10 +25,13 @@ Extends native wp-admin/js/image-edit.js
 3. Go to **Media Library** to begin converting your images.
 
 
+# Links
+- Documentation & updates: https://openstudios.xyz
+- Report issues or contribute: https://github.com/openstudios/euclid
+
 ## Changelog
 
 ### 1.0.0
 - Initial release: basic PNG/JPG to SVG conversion.
 - Admin interface and Media Library integration.
-- Batch conversion support.
 - Privacy-first no external API conversion.
