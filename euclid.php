@@ -5,6 +5,7 @@
  * Description:  Convert raster images into clean SVGs inside WordPress.
  * Version:      1.0.0
  * Author:       Open Studios
+ * Author URI:   https://openstudios.xyz
  * License:      GPLv2 or later
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -112,3 +113,15 @@ function euclid_save_svg() {
         'url' => $file_url,
     ]);
 }
+
+add_filter('plugin_row_meta', function ($links, $file) {
+
+    if ($file !== plugin_basename(__FILE__)) {
+        return $links;
+    }
+
+    $links[] = '<a href="https://openstudios.xyz/" target="_blank">Visit plugin site</a>';
+
+    return $links;
+
+}, 10, 2);
