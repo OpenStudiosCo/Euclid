@@ -180,7 +180,7 @@ add_filter('plugin_row_meta', function ($links, $file) {
         return $links;
     }
 
-    $links[] = '<a href="https://openstudios.xyz/" target="_blank">' . __('Visit plugin site', 'euclid') . '</a>';
+    $links[] = '<a href="https://github.com/OpenStudiosCo/Euclid" target="_blank">' . __('Visit plugin site', 'euclid') . '</a>';
 
     return $links;
 
