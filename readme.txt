@@ -1,7 +1,7 @@
 === Euclid ===
 Plugin Name: Euclid
 Contributors: openstudios
-Tags: svg, vector, image, media, graphics, logo
+Tags: svg, vector, image, graphics, media
 Requires at least: 6.5
 Tested up to: 7.0
 Stable tag: 1.0.0

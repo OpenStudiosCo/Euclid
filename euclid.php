@@ -74,8 +74,13 @@ function euclid_save_svg() {
         wp_send_json_error(__('Permission denied', 'euclid'));
     }
 
-    $svg = isset($_POST['svg']) ? wp_unslash($_POST['svg']) : '';
-    $attachment_id = intval($_POST['attachment_id']);
+    $svg = isset($_POST['svg'])
+        ? wp_unslash($_POST['svg'])
+        : '';
+
+    $attachment_id = isset($_POST['attachment_id'])
+        ? intval($_POST['attachment_id'])
+        : 0;
 
     if (!$svg || !$attachment_id) {
         wp_send_json_error(__('Missing data', 'euclid'));
