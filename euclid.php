@@ -13,6 +13,10 @@
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 function euclid_enqueue_media_edit_js($hook) {
 
     if (in_array($hook, ['upload.php', 'post.php', 'post-new.php'])) {
