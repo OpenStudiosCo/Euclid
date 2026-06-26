@@ -53,20 +53,20 @@ add_action('wp_ajax_euclid_save_svg', 'euclid_save_svg');
 function euclid_save_svg() {
 
     if (!current_user_can('upload_files')) {
-        wp_send_json_error('Permission denied');
+        wp_send_json_error(__('Permission denied', 'euclid'));
     }
 
     $svg = isset($_POST['svg']) ? wp_unslash($_POST['svg']) : '';
     $attachment_id = intval($_POST['attachment_id']);
 
     if (!$svg || !$attachment_id) {
-        wp_send_json_error('Missing data');
+        wp_send_json_error(__('Missing data', 'euclid'));
     }
 
     // Get original attachment
     $original = get_post($attachment_id);
     if (!$original) {
-        wp_send_json_error('Invalid attachment');
+        wp_send_json_error(__('Invalid attachment', 'euclid'));
     }
 
     // Upload dir
@@ -120,7 +120,7 @@ add_filter('plugin_row_meta', function ($links, $file) {
         return $links;
     }
 
-    $links[] = '<a href="https://openstudios.xyz/" target="_blank">Visit plugin site</a>';
+    $links[] = '<a href="https://openstudios.xyz/" target="_blank">' . __('Visit plugin site', 'euclid') . '</a>';
 
     return $links;
 
