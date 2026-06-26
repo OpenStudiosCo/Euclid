@@ -2,8 +2,8 @@
 Plugin Name: Euclid
 Contributors: openstudios
 Tags: svg, vector, image, media, graphics, logo
-Requires at least: 6.0
-Tested up to: 6.6.1
+Requires at least: 6.5
+Tested up to: 7.0
 Stable tag: 1.0.0
 Requires PHP: 5.6
 License: GPLv2 or later
