@@ -6,6 +6,9 @@
  * Version:      1.0.0
  * Author:       Open Studios
  * Author URI:   https://openstudios.xyz
+ * Text Domain:  euclid
+ * Contributors: https://github.com/OpenStudiosCo/Euclid/graphs/contributors
+ * Tags:         svg, vector, image, media, graphics, logo
  * License:      GPLv2 or later
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  */
