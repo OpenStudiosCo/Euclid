@@ -73,8 +73,17 @@ window.euclid.initialSettings = ($) => {
  */
 window.euclid.save = function () {
 
-    const svg = Potrace.getSVG(1);
+    if (window.euclid.method === "potrace") {
+        window.euclid.potrace.save();
+    }
+    else {
+        window.euclid.imagetracer.save();
+    }
 
+}
+
+// Called by the two integration save functions.
+window.euclid.submitFile = function (svg) {
     jQuery.ajax({
         url: config.ajax_url,
         method: "POST",

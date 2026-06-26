@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Kudos to blocksy for the load order.
-function euclid_clean_svg( $content ) {
+function euclid_sanitize_svg( $content ) {
     $base_path = plugin_dir_path(__FILE__) . 'vendor/svg-sanitizer/src';
 
     require_once($base_path . '/data/AttributeInterface.php');
@@ -54,7 +54,7 @@ function euclid_enqueue_media_edit_js($hook) {
              'euclid-libs-potrace',
              plugin_dir_url(__FILE__) . 'vendor/potrace.js',
              ['jquery'],
-             '1.0',
+             '1.16',
              true
         );
 
@@ -62,7 +62,7 @@ function euclid_enqueue_media_edit_js($hook) {
              'euclid-libs-imagetracer',
              plugin_dir_url(__FILE__) . 'vendor/imagetracer_v1.2.6.js',
              ['jquery'],
-             '1.0',
+             '1.2.6',
              true
         );
 
@@ -71,17 +71,13 @@ function euclid_enqueue_media_edit_js($hook) {
         wp_register_script_module(
             'euclid-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
-            array(),
+            [],
             '1.0.0',
             array( 'in_footer' => true )
         );
 
         wp_enqueue_script_module(
-            'euclid-admin-bootstrap',
-            plugin_dir_url(__FILE__) . 'js/admin.js',
-            ['jquery', 'euclid-libs-potrace', 'euclid-libs-imagetracer'],
-            '1.0',
-            []
+            'euclid-admin-bootstrap'
         );
 
     }
@@ -104,16 +100,28 @@ function euclid_save_svg() {
         wp_send_json_error(__('Permission denied', 'euclid'));
     }
 
-    $svg = isset($_POST['svg'])
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $svg_raw = isset($_POST['svg'])
         ? wp_unslash($_POST['svg'])
         : '';
+
+    if (empty($svg_raw)) {
+        wp_send_json_error(__('Missing SVG data', 'euclid'));
+    }
+
+    // Sanitize the SVG data with svg-sanitizer
+    $svg = euclid_sanitize_svg($svg_raw);
+
+    if (!$svg) {
+        wp_send_json_error(__('Invalid SVG data', 'euclid'));
+    }
 
     $attachment_id = isset($_POST['attachment_id'])
         ? intval($_POST['attachment_id'])
         : 0;
 
-    if (!$svg || !$attachment_id) {
-        wp_send_json_error(__('Missing data', 'euclid'));
+    if (!$attachment_id) {
+        wp_send_json_error(__('Internal error: Missing attachment id', 'euclid'));
     }
 
     // Get original attachment
@@ -128,26 +136,12 @@ function euclid_save_svg() {
     // Generate filename
     $original_filename = get_post_meta($attachment_id, '_wp_attached_file', true);
     $filename_base = sanitize_file_name(pathinfo($original_filename, PATHINFO_FILENAME));
-    $filename = $filename_base . '-vector.svg';
+    $filename = $filename_base . '-' . time() . '-vector.svg';
 
     $file_path = $upload_dir['path'] . '/' . $filename;
     $file_url  = $upload_dir['url'] . '/' . $filename;
 
-    // Save SVG file
-    $clean_svg = euclid_clean_svg($svg);
-
-    if (!$clean_svg) {
-        wp_send_json_error(__('Invalid SVG data', 'euclid'));
-    }
-    elseif (stripos($clean_svg, '<svg') === false) {
-        wp_send_json_error(__('Invalid SVG structure', 'euclid'));
-    }
-
-    require_once ABSPATH . 'wp-admin/includes/file.php';
-    WP_Filesystem();
-
-    global $wp_filesystem;
-    $wp_filesystem->put_contents($file_path, $clean_svg, FS_CHMOD_FILE);
+    file_put_contents($file_path, $svg);
 
     // Prepare attachment post
     $attachment = [

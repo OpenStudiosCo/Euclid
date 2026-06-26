@@ -9,7 +9,7 @@ export default class ImagetracerIntegration {
     controls;
 
     constructor($) {
-    
+
         this.controls = ImageTracer.checkoptions();
         this.controls.numberofcolors = 4;
         this.controls.strokewidth = 2;
@@ -25,13 +25,13 @@ export default class ImagetracerIntegration {
         this.controls.transparent = true
 
         // MVP phase 2
-        // 
-        // 
+        //
+        //
         // $('.imagetracerConfig').on('change', () => {
         //     console.log('hiii');
         //     this.preview(app);
         // });
-        
+
         // $('.imagetracer.controls .ui.slider.colours').slider({
         //     min: 2,
         //     max: 16,
@@ -67,29 +67,33 @@ export default class ImagetracerIntegration {
         //   turdsize: $('.turdsize').val(),
         //   turnpolicy: $('.turnpolicy').find(":selected").text().toLowerCase()
         // });
-        
+
         ImageTracer.imageToSVG(window.euclid.src, function(svg) {
             const previewBox = jQuery(".imgedit-crop-preview");
             previewBox.html(svg);
         }, 'sharp');
     }
 
+    save( ) {
+        ImageTracer.imageToSVG(window.euclid.src, window.euclid.submitFile, 'sharp');
+    }
+
     // Is this use at all? Check Manifold src.
-    // 
-    // 
+    //
+    //
     // // Duplicates the image programatically so we can get its original dimensions.
     // getImageDimensions() {
     //     var original_image = document.getElementById('original-image');
     //     var img = document.createElement('img');
     //     img.src = original_image.src;
-        
+
     //     // Get the image data from a virtual canvas.
     //     var canvas = document.createElement('canvas');
     //     canvas.width = img.width;
     //     canvas.height = img.height;
     //     var context = canvas.getContext('2d');
     //     context.drawImage(img,0,0);
-        
+
     //     return context.getImageData(0, 0, img.width, img.height);
     // }
 
