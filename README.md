@@ -27,7 +27,18 @@ Extends native wp-admin/js/image-edit.js
 
 # Links
 - Documentation & updates: https://openstudios.xyz
-- Report issues or contribute: https://github.com/openstudios/euclid
+- Report issues or contribute: https://github.com/OpenStudiosCo/Euclid
+
+## Screenshots
+
+1. Convert image interface
+[![Convert image interface](assets/screenshot-1.png)](assets/screenshot-1.png)
+
+2. Black & white SVG Preview
+[![Black & white SVG Preview](assets/screenshot-2.png)](assets/screenshot-2.png)    
+
+3. Black & white SVG Result
+[![Black & white SVG Result](assets/screenshot-3.png)](assets/screenshot-3.png)
 
 ## Changelog
 

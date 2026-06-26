@@ -53,6 +53,12 @@ This plugin is best suited for logos, icons, and flat illustrations.
 
 * Initial release
 
+== Screenshots ==
+
+1. Convert image interface
+2. Black & white SVG Preview
+3. Black & white SVG Result
+
 == Upgrade Notice ==
 
 = 1.0.0 =
