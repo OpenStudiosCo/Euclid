@@ -1,5 +1,5 @@
 === Euclid ===
-Plugin Name: Euclid
+Plugin Name: Euclid - Image to Vector Converter
 Contributors: openstudios
 Tags: svg, vector, image, graphics, media
 Requires at least: 6.5

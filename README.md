@@ -1,4 +1,4 @@
-# Euclid
+# Euclid - Image to Vector Converter
 
 **Euclid** converts raster images (PNG, JPG) into clean, scalable SVGs directly in WordPress. Designed for designers, creators, and print workflows, Euclid makes it easy to generate vector graphics without leaving your site.
 
