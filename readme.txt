@@ -1,4 +1,4 @@
-=== Euclid ===
+=== Euclid - Image to Vector Converter ===
 Plugin Name: Euclid - Image to Vector Converter
 Contributors: openstudios
 Tags: svg, vector, image, graphics, media
