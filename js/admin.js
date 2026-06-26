@@ -79,6 +79,7 @@ window.euclid.save = function () {
             action: "euclid_save_svg",
             svg: svg,
             attachment_id: imageEdit.postid,
+            nonce: euclidAjax.nonce
         },
         success: function (res) {
             console.log("Saved:", res);

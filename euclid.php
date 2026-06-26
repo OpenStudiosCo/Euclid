@@ -52,12 +52,23 @@ function euclid_enqueue_media_edit_js($hook) {
             '1.0',
             true
         );
+
+        wp_localize_script(
+            'euclid-admin-bootstrap',
+            'euclidAjax',
+            [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce'    => wp_create_nonce('euclid_save_svg_nonce'),
+            ]
+        );
     }
 }
 add_action('admin_enqueue_scripts', 'euclid_enqueue_media_edit_js');
 
 add_action('wp_ajax_euclid_save_svg', 'euclid_save_svg');
 function euclid_save_svg() {
+
+    check_ajax_referer('euclid_save_svg_nonce', 'nonce');
 
     if (!current_user_can('upload_files')) {
         wp_send_json_error(__('Permission denied', 'euclid'));
