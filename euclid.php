@@ -100,9 +100,9 @@ function euclid_save_svg() {
         wp_send_json_error(__('Permission denied', 'euclid'));
     }
 
-    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
     $svg_raw = isset($_POST['svg'])
-        ? wp_unslash($_POST['svg'])
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        ? wp_unslash($_POST['svg']) // NOTE: This value is sanitized later with euclid_sanitize_svg().
         : '';
 
     if (empty($svg_raw)) {
@@ -136,7 +136,7 @@ function euclid_save_svg() {
     // Generate filename
     $original_filename = get_post_meta($attachment_id, '_wp_attached_file', true);
     $filename_base = sanitize_file_name(pathinfo($original_filename, PATHINFO_FILENAME));
-    $filename = $filename_base . '-' . time() . '-vector.svg';
+    $filename = $filename_base . '-vector-' . wp_generate_uuid4() . '.svg';
 
     $file_path = $upload_dir['path'] . '/' . $filename;
     $file_url  = $upload_dir['url'] . '/' . $filename;
