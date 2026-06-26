@@ -17,6 +17,27 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// Kudos to blocksy for the load order.
+function euclid_clean_svg( $content ) {
+    $base_path = plugin_dir_path(__FILE__) . 'vendor/svg-sanitizer/src';
+
+    require_once($base_path . '/data/AttributeInterface.php');
+	require_once($base_path . '/data/TagInterface.php');
+	require_once($base_path . '/data/AllowedAttributes.php');
+	require_once($base_path . '/data/AllowedTags.php');
+	require_once($base_path . '/data/XPath.php');
+	require_once($base_path . '/ElementReference/Resolver.php');
+	require_once($base_path . '/ElementReference/Subject.php');
+	require_once($base_path . '/ElementReference/Usage.php');
+	require_once($base_path . '/Exceptions/NestingException.php');
+	require_once($base_path . '/Helper.php');
+	require_once($base_path . '/Sanitizer.php');
+
+	$sanitizer = new enshrined\svgSanitize\Sanitizer();
+
+	return $sanitizer->sanitize($content);
+}
+
 function euclid_enqueue_media_edit_js($hook) {
 
     if (in_array($hook, ['upload.php', 'post.php', 'post-new.php'])) {
@@ -45,25 +66,34 @@ function euclid_enqueue_media_edit_js($hook) {
              true
         );
 
+        // Handle WP 6.9 changes
+        // @see https://www.reddit.com/r/Wordpress/comments/1peoabm/wordpress_69_enqueue_script_issue_fix/
+        wp_register_script_module(
+            'euclid-admin-bootstrap',
+            plugin_dir_url(__FILE__) . 'js/admin.js',
+            array(),
+            '1.0.0',
+            array( 'in_footer' => true )
+        );
+
         wp_enqueue_script_module(
             'euclid-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
             ['jquery', 'euclid-libs-potrace', 'euclid-libs-imagetracer'],
             '1.0',
-            true
+            []
         );
 
-        wp_localize_script(
-            'euclid-admin-bootstrap',
-            'euclidAjax',
-            [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce'    => wp_create_nonce('euclid_save_svg_nonce'),
-            ]
-        );
     }
 }
 add_action('admin_enqueue_scripts', 'euclid_enqueue_media_edit_js');
+
+add_filter( 'script_module_data_euclid-admin-bootstrap', function ( array $data ): array {
+    $data['ajax_url']   = admin_url('admin-ajax.php');
+    $data['nonce']    = wp_create_nonce('euclid_save_svg_nonce');
+
+    return $data; // Must return an array
+});
 
 add_action('wp_ajax_euclid_save_svg', 'euclid_save_svg');
 function euclid_save_svg() {
@@ -88,7 +118,7 @@ function euclid_save_svg() {
 
     // Get original attachment
     $original = get_post($attachment_id);
-    if (!$original) {
+    if (!$original || $original->post_type !== 'attachment') {
         wp_send_json_error(__('Invalid attachment', 'euclid'));
     }
 
@@ -97,14 +127,27 @@ function euclid_save_svg() {
 
     // Generate filename
     $original_filename = get_post_meta($attachment_id, '_wp_attached_file', true);
-    $filename_base = pathinfo($original_filename, PATHINFO_FILENAME);
+    $filename_base = sanitize_file_name(pathinfo($original_filename, PATHINFO_FILENAME));
     $filename = $filename_base . '-vector.svg';
 
     $file_path = $upload_dir['path'] . '/' . $filename;
     $file_url  = $upload_dir['url'] . '/' . $filename;
 
     // Save SVG file
-    file_put_contents($file_path, $svg);
+    $clean_svg = euclid_clean_svg($svg);
+
+    if (!$clean_svg) {
+        wp_send_json_error(__('Invalid SVG data', 'euclid'));
+    }
+    elseif (stripos($clean_svg, '<svg') === false) {
+        wp_send_json_error(__('Invalid SVG structure', 'euclid'));
+    }
+
+    require_once ABSPATH . 'wp-admin/includes/file.php';
+    WP_Filesystem();
+
+    global $wp_filesystem;
+    $wp_filesystem->put_contents($file_path, $clean_svg, FS_CHMOD_FILE);
 
     // Prepare attachment post
     $attachment = [

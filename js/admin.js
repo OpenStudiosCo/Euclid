@@ -8,6 +8,9 @@ import LaunchButton from "./ui/LaunchButton.js";
 import PreviewArea        from "./ui/PreviewArea.js";
 import Tools              from "./ui/Tools.js";
 
+const configRaw = document.getElementById('wp-script-module-data-euclid-admin-bootstrap');
+const config = JSON.parse(configRaw.textContent);
+
 window.euclid = {};
 
 jQuery(function ($) {
@@ -73,17 +76,22 @@ window.euclid.save = function () {
     const svg = Potrace.getSVG(1);
 
     jQuery.ajax({
-        url: ajaxurl,
+        url: config.ajax_url,
         method: "POST",
         data: {
             action: "euclid_save_svg",
             svg: svg,
             attachment_id: imageEdit.postid,
-            nonce: euclidAjax.nonce
+            nonce: config.nonce
         },
         success: function (res) {
-            console.log("Saved:", res);
-            alert("SVG created in Media Library");
+            if (res.success) {
+                alert("SVG created in Media Library");
+            }
+            else {
+                alert("Error saving SVG: " + res.data);
+            }
+
         },
         error: function (err) {
             console.error(err);
