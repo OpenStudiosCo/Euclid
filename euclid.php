@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name:  Euclid
+ * Plugin Name:  Euclid - Image to Vector Converter
  * Description:  Convert raster images into clean SVGs inside WordPress.
  * Version:      1.0.0
  * Author:       Open Studios
