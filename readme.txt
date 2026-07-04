@@ -1,5 +1,5 @@
-=== Open Studios - Image to Vector Converter ===
-Plugin Name: Open Studios - Image to Vector Converter
+=== Open Studios Image to Vector Converter ===
+Plugin Name: Open Studios Image to Vector Converter
 Contributors: openstudios
 Tags: svg, vector, image, graphics, media
 Requires at least: 6.5

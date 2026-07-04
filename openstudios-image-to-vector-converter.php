@@ -96,7 +96,7 @@ function ositv_save_svg() {
     check_ajax_referer('ositv_save_svg_nonce', 'nonce');
 
     if (!current_user_can('upload_files')) {
-        wp_send_json_error(__('Permission denied', 'openstudios-image-to-vector'));
+        wp_send_json_error(__('Permission denied', 'openstudios-image-to-vector-converter'));
     }
 
     $svg_raw = isset($_POST['svg'])
@@ -105,14 +105,14 @@ function ositv_save_svg() {
         : '';
 
     if (empty($svg_raw)) {
-        wp_send_json_error(__('Missing SVG data', 'openstudios-image-to-vector'));
+        wp_send_json_error(__('Missing SVG data', 'openstudios-image-to-vector-converter'));
     }
 
     // Sanitize the SVG data with svg-sanitizer
     $svg = ositv_sanitize_svg($svg_raw);
 
     if (!$svg) {
-        wp_send_json_error(__('Invalid SVG data', 'openstudios-image-to-vector'));
+        wp_send_json_error(__('Invalid SVG data', 'openstudios-image-to-vector-converter'));
     }
 
     $attachment_id = isset($_POST['attachment_id'])
@@ -120,13 +120,13 @@ function ositv_save_svg() {
         : 0;
 
     if (!$attachment_id) {
-        wp_send_json_error(__('Internal error: Missing attachment id', 'openstudios-image-to-vector'));
+        wp_send_json_error(__('Internal error: Missing attachment id', 'openstudios-image-to-vector-converter'));
     }
 
     // Get original attachment
     $original = get_post($attachment_id);
     if (!$original || $original->post_type !== 'attachment') {
-        wp_send_json_error(__('Invalid attachment', 'openstudios-image-to-vector'));
+        wp_send_json_error(__('Invalid attachment', 'openstudios-image-to-vector-converter'));
     }
 
     // Upload dir
@@ -179,7 +179,7 @@ add_filter('plugin_row_meta', function ($links, $file) {
         return $links;
     }
 
-    $links[] = '<a href="https://github.com/OpenStudiosCo/Euclid" target="_blank">' . __('Visit plugin site', 'openstudios-image-to-vector') . '</a>';
+    $links[] = '<a href="https://github.com/OpenStudiosCo/Euclid" target="_blank">' . __('Visit plugin site', 'openstudios-image-to-vector-converter') . '</a>';
 
     return $links;
 
