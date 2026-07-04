@@ -1,11 +1,11 @@
-=== Euclid - Image to Vector Converter ===
-Plugin Name: Euclid - Image to Vector Converter
+=== Open Studios - Image to Vector Converter ===
+Plugin Name: Open Studios - Image to Vector Converter
 Contributors: openstudios
 Tags: svg, vector, image, graphics, media
 Requires at least: 6.5
 Tested up to: 7.0
 Stable tag: 1.0.0
-Requires PHP: 5.6
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Convert raster images into SVGs directly inside the WordPress media editor.
 
 == Description ==
 
-Euclid lets you convert raster images into scalable vector graphics (SVG) directly within the WordPress image editor.
+This plugin lets you convert raster images into scalable vector graphics (SVG) directly within the WordPress image editor.
 
 Choose between two vectorisation modes:
 
@@ -45,7 +45,7 @@ This plugin is best suited for logos, icons, and flat illustrations.
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/euclid`
+1. Upload the plugin files to `/wp-content/plugins/openstudios-image-to-vector-converter`
 2. Activate the plugin through the WordPress admin
 3. Open an image in the Media Library editor to begin
 
@@ -64,4 +64,4 @@ This plugin is best suited for logos, icons, and flat illustrations.
 == Upgrade Notice ==
 
 = 1.0.0 =
-Initial release of Euclid
+Initial release of OpenStudios Image to Vector Converter

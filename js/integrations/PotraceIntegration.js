@@ -25,7 +25,7 @@ export default class PotraceIntegration {
             turnpolicy: "black"
         });
 
-        // $('.euclidpotraceConfig').on('change', () => {
+        // $('.ositvpotraceConfig').on('change', () => {
         //   this.preview(app);
         // });
     }
@@ -68,14 +68,14 @@ export default class PotraceIntegration {
         //   turnpolicy: $('.turnpolicy').find(":selected").text().toLowerCase()
         // });
 
-        this.createSVG(window.euclid.src, function(svg) {
+        this.createSVG(window.ositv.src, function(svg) {
             const previewBox = jQuery(".imgedit-crop-preview");
             previewBox.html(svg);
         });
     }
 
     save() {
-        this.createSVG(window.euclid.src, window.euclid.submitFile);
+        this.createSVG(window.ositv.src, window.ositv.submitFile);
     }
 
 }

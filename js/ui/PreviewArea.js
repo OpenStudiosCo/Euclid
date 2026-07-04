@@ -3,7 +3,7 @@ export default class PreviewArea {
 
     // Add the preview to the sidebar.
     const preview = $(
-        `<div class="imgedit-group imgedit-euclid">
+        `<div class="imgedit-group imgedit-ositv">
             <div class="imgedit-group-controls">
                 <div class="imgedit-crop-wrap">
                     <div class="imgedit-crop-preview"></div>
@@ -18,11 +18,11 @@ export default class PreviewArea {
 
 
   loadSVG() {
-      if (window.euclid.method === "imagetracer") {
-          window.euclid.imagetracer.preview();
+      if (window.ositv.method === "imagetracer") {
+          window.ositv.imagetracer.preview();
       }
       else {
-          window.euclid.potrace.preview();
+          window.ositv.potrace.preview();
       }
   }
 

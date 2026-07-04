@@ -10,8 +10,8 @@ export default class LaunchButton {
     convertBtn.on("click", function (e) {
         e.preventDefault();
 
-        const euclidContainer = $(".imgedit-euclid");
-        euclidContainer.toggleClass("imgedit-panel-active");
+        const ositvContainer = $(".imgedit-ositv");
+        ositvContainer.toggleClass("imgedit-panel-active");
     });
 
   }

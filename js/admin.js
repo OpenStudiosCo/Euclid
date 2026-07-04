@@ -8,54 +8,54 @@ import LaunchButton from "./ui/LaunchButton.js";
 import PreviewArea        from "./ui/PreviewArea.js";
 import Tools              from "./ui/Tools.js";
 
-const configRaw = document.getElementById('wp-script-module-data-euclid-admin-bootstrap');
+const configRaw = document.getElementById('wp-script-module-data-ositv-admin-bootstrap');
 const config = JSON.parse(configRaw.textContent);
 
-window.euclid = {};
+window.ositv = {};
 
 jQuery(function ($) {
 
     // Modal (Media Library)
     $(document).on("image-editor-ui-ready", () => {
-        window.euclid.init($);
+        window.ositv.init($);
     });
 });
 
 /**
- * Initialise the Euclid editor.
+ * Initialise the ositv editor.
  *
  * @param jQuery $
  */
-window.euclid.init = ($) => {
+window.ositv.init = ($) => {
 
     // Populate initial settings.
-    window.euclid.initialSettings($);
+    window.ositv.initialSettings($);
 
     // Add our Convert to Vector button
-    window.euclid.launchButton = new LaunchButton($);
+    window.ositv.launchButton = new LaunchButton($);
 
     // SVG preview and tools
-    window.euclid.preview = new PreviewArea($);
-    window.euclid.tools   = new Tools($);
+    window.ositv.preview = new PreviewArea($);
+    window.ositv.tools   = new Tools($);
 
     // Imagetracer integration
-    window.euclid.imagetracer = new ImagetracerIntegration($);
+    window.ositv.imagetracer = new ImagetracerIntegration($);
 
     // Potrace integration
-    window.euclid.potrace = new PotraceIntegration($);
+    window.ositv.potrace = new PotraceIntegration($);
 
     // Source image.
-    window.euclid.src = $(".imgedit-crop-wrap img").attr("src");
+    window.ositv.src = $(".imgedit-crop-wrap img").attr("src");
 
     // Initialise the preview area by setting the method.
-    window.euclid.changeMethod();
+    window.ositv.changeMethod();
 
 }
 
 /**
  * Frontend Settings scaffold.
  */
-window.euclid.initialSettings = ($) => {
+window.ositv.initialSettings = ($) => {
     let settings = {
         method: "imagetracer",
         selectors: {
@@ -64,31 +64,31 @@ window.euclid.initialSettings = ($) => {
     };
     for (let key in settings) {
         let value = settings[key];
-        window.euclid[key] = value;
+        window.ositv[key] = value;
     }
 }
 
 /**
  * Save SVG Ajax caller.
  */
-window.euclid.save = function () {
+window.ositv.save = function () {
 
-    if (window.euclid.method === "potrace") {
-        window.euclid.potrace.save();
+    if (window.ositv.method === "potrace") {
+        window.ositv.potrace.save();
     }
     else {
-        window.euclid.imagetracer.save();
+        window.ositv.imagetracer.save();
     }
 
 }
 
 // Called by the two integration save functions.
-window.euclid.submitFile = function (svg) {
+window.ositv.submitFile = function (svg) {
     jQuery.ajax({
         url: config.ajax_url,
         method: "POST",
         data: {
-            action: "euclid_save_svg",
+            action: "ositv_save_svg",
             svg: svg,
             attachment_id: imageEdit.postid,
             nonce: config.nonce
@@ -112,8 +112,8 @@ window.euclid.submitFile = function (svg) {
 /**
  * Changes the active vectorisation library and displayed tools.
  */
-window.euclid.changeMethod = function () {
-    const method = jQuery("#euclid-vectorisation-method").val();
-    window.euclid.method = method;
-    window.euclid.preview.loadSVG();
+window.ositv.changeMethod = function () {
+    const method = jQuery("#ositv-vectorisation-method").val();
+    window.ositv.method = method;
+    window.ositv.preview.loadSVG();
 }

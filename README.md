@@ -1,8 +1,8 @@
-# Euclid - Image to Vector Converter
+# Image to Vector Converter (powered by Euclid)
 
-**Euclid** converts raster images (PNG, JPG) into clean, scalable SVGs directly in WordPress. Designed for designers, creators, and print workflows, Euclid makes it easy to generate vector graphics without leaving your site.
+This WordPress plugin converts raster images (PNG, JPG) into clean, scalable SVGs directly in WordPress. Designed for designers, creators, and print workflows, Euclid makes it easy to generate vector graphics without leaving your site.
 
-Extends the native Wordpress Media Library image editor with options to convert images to SVG.
+Extends the native WordPress Media Library image editor with options to convert images to SVG.
 
 ## Features
 
@@ -20,7 +20,7 @@ Extends the native Wordpress Media Library image editor with options to convert 
 
 ## Installation
 
-1. Upload the `euclid` folder to the `/wp-content/plugins/` directory.
+1. Upload the `openstudios-image-to-vector-converter` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Go to **Media Library** to begin converting your images.
 

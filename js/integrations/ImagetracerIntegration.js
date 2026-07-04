@@ -68,14 +68,14 @@ export default class ImagetracerIntegration {
         //   turnpolicy: $('.turnpolicy').find(":selected").text().toLowerCase()
         // });
 
-        ImageTracer.imageToSVG(window.euclid.src, function(svg) {
+        ImageTracer.imageToSVG(window.ositv.src, function(svg) {
             const previewBox = jQuery(".imgedit-crop-preview");
             previewBox.html(svg);
         }, 'sharp');
     }
 
     save( ) {
-        ImageTracer.imageToSVG(window.euclid.src, window.euclid.submitFile, 'sharp');
+        ImageTracer.imageToSVG(window.ositv.src, window.ositv.submitFile, 'sharp');
     }
 
     // Is this use at all? Check Manifold src.

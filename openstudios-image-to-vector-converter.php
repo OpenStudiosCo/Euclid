@@ -1,13 +1,12 @@
 <?php
 
 /**
- * Plugin Name:  Euclid - Image to Vector Converter
+ * Plugin Name:  Open Studios Image to Vector Converter
  * Description:  Convert raster images into clean SVGs inside WordPress.
  * Version:      1.0.0
  * Author:       Open Studios
  * Author URI:   https://openstudios.xyz
- * Text Domain:  euclid
- * Contributors: https://github.com/OpenStudiosCo/Euclid/graphs/contributors
+ * Text Domain:  openstudios-image-to-vector-converter
  * Tags:         svg, vector, image, media, graphics, logo
  * License:      GPLv2 or later
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Kudos to blocksy for the load order.
-function euclid_sanitize_svg( $content ) {
+function ositv_sanitize_svg( $content ) {
     $base_path = plugin_dir_path(__FILE__) . 'vendor/svg-sanitizer/src';
 
     require_once($base_path . '/data/AttributeInterface.php');
@@ -38,12 +37,12 @@ function euclid_sanitize_svg( $content ) {
 	return $sanitizer->sanitize($content);
 }
 
-function euclid_enqueue_media_edit_js($hook) {
+function ositv_enqueue_media_edit_js($hook) {
 
     if (in_array($hook, ['upload.php', 'post.php', 'post-new.php'])) {
 
         wp_enqueue_style(
-            'euclid-admin-styles',
+            'ositv-admin-styles',
             plugin_dir_url(__FILE__) . 'css/admin.css',
             [],
             '1.0',
@@ -51,7 +50,7 @@ function euclid_enqueue_media_edit_js($hook) {
         );
 
         wp_enqueue_script(
-             'euclid-libs-potrace',
+             'ositv-libs-potrace',
              plugin_dir_url(__FILE__) . 'vendor/potrace.js',
              ['jquery'],
              '1.16',
@@ -59,7 +58,7 @@ function euclid_enqueue_media_edit_js($hook) {
         );
 
         wp_enqueue_script(
-             'euclid-libs-imagetracer',
+             'ositv-libs-imagetracer',
              plugin_dir_url(__FILE__) . 'vendor/imagetracer_v1.2.6.js',
              ['jquery'],
              '1.2.6',
@@ -69,7 +68,7 @@ function euclid_enqueue_media_edit_js($hook) {
         // Handle WP 6.9 changes
         // @see https://www.reddit.com/r/Wordpress/comments/1peoabm/wordpress_69_enqueue_script_issue_fix/
         wp_register_script_module(
-            'euclid-admin-bootstrap',
+            'ositv-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
             [],
             '1.0.0',
@@ -77,43 +76,43 @@ function euclid_enqueue_media_edit_js($hook) {
         );
 
         wp_enqueue_script_module(
-            'euclid-admin-bootstrap'
+            'ositv-admin-bootstrap'
         );
 
     }
 }
-add_action('admin_enqueue_scripts', 'euclid_enqueue_media_edit_js');
+add_action('admin_enqueue_scripts', 'ositv_enqueue_media_edit_js');
 
-add_filter( 'script_module_data_euclid-admin-bootstrap', function ( array $data ): array {
+add_filter( 'script_module_data_ositv-admin-bootstrap', function ( array $data ): array {
     $data['ajax_url']   = admin_url('admin-ajax.php');
-    $data['nonce']    = wp_create_nonce('euclid_save_svg_nonce');
+    $data['nonce']    = wp_create_nonce('ositv_save_svg_nonce');
 
     return $data; // Must return an array
 });
 
-add_action('wp_ajax_euclid_save_svg', 'euclid_save_svg');
-function euclid_save_svg() {
+add_action('wp_ajax_ositv_save_svg', 'ositv_save_svg');
+function ositv_save_svg() {
 
-    check_ajax_referer('euclid_save_svg_nonce', 'nonce');
+    check_ajax_referer('ositv_save_svg_nonce', 'nonce');
 
     if (!current_user_can('upload_files')) {
-        wp_send_json_error(__('Permission denied', 'euclid'));
+        wp_send_json_error(__('Permission denied', 'openstudios-image-to-vector'));
     }
 
     $svg_raw = isset($_POST['svg'])
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        ? wp_unslash($_POST['svg']) // NOTE: This value is sanitized later with euclid_sanitize_svg().
+        ? wp_unslash($_POST['svg']) // NOTE: This value is sanitized later with ositv_sanitize_svg().
         : '';
 
     if (empty($svg_raw)) {
-        wp_send_json_error(__('Missing SVG data', 'euclid'));
+        wp_send_json_error(__('Missing SVG data', 'openstudios-image-to-vector'));
     }
 
     // Sanitize the SVG data with svg-sanitizer
-    $svg = euclid_sanitize_svg($svg_raw);
+    $svg = ositv_sanitize_svg($svg_raw);
 
     if (!$svg) {
-        wp_send_json_error(__('Invalid SVG data', 'euclid'));
+        wp_send_json_error(__('Invalid SVG data', 'openstudios-image-to-vector'));
     }
 
     $attachment_id = isset($_POST['attachment_id'])
@@ -121,13 +120,13 @@ function euclid_save_svg() {
         : 0;
 
     if (!$attachment_id) {
-        wp_send_json_error(__('Internal error: Missing attachment id', 'euclid'));
+        wp_send_json_error(__('Internal error: Missing attachment id', 'openstudios-image-to-vector'));
     }
 
     // Get original attachment
     $original = get_post($attachment_id);
     if (!$original || $original->post_type !== 'attachment') {
-        wp_send_json_error(__('Invalid attachment', 'euclid'));
+        wp_send_json_error(__('Invalid attachment', 'openstudios-image-to-vector'));
     }
 
     // Upload dir
@@ -161,7 +160,7 @@ function euclid_save_svg() {
     }
 
     // Copy other useful meta if needed
-    update_post_meta($new_attachment_id, '_euclid_source_id', $attachment_id);
+    update_post_meta($new_attachment_id, '_ositv_source_id', $attachment_id);
 
     // Generate metadata (won’t do much for SVG, but keeps WP happy)
     require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -180,7 +179,7 @@ add_filter('plugin_row_meta', function ($links, $file) {
         return $links;
     }
 
-    $links[] = '<a href="https://github.com/OpenStudiosCo/Euclid" target="_blank">' . __('Visit plugin site', 'euclid') . '</a>';
+    $links[] = '<a href="https://github.com/OpenStudiosCo/Euclid" target="_blank">' . __('Visit plugin site', 'openstudios-image-to-vector') . '</a>';
 
     return $links;
 
