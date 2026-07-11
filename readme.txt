@@ -55,6 +55,80 @@ This plugin is best suited for logos, icons, and flat illustrations.
 
 * Initial release
 
+== Frequently Asked Questions ==
+
+= What does this plugin do? =
+
+Open Studios Image to Vector Converter converts logos, icons, and simple graphics into SVG files directly inside the WordPress media editor.
+
+= What types of images work best? =
+
+This plugin works best with:
+
+- Logos
+- Icons
+- Flat illustrations
+- High-contrast graphics
+
+It is designed for simple, clean visuals, not complex photographs.
+
+= Can I convert photos into SVGs? =
+
+Not really, and that's intentional.
+
+The plugin is not designed for full photo vectorisation. Complex images typically produce noisy or overly detailed SVGs. For complex editing we recommend a tool like Inkscape or commercial options.
+
+= Will more advanced tracing options be added? =
+
+Future updates will include:
+
+- Background removal for colour tracing
+- Presets for useful default profiles
+- Customisation settings for going further
+
+These will be added carefully to keep the plugin simple and easy to use.
+
+= Will SVG optimisation be included? =
+
+Yes, this is planned.
+
+Future updates may include automatic SVG optimisation to reduce file size and improve performance.
+
+= Are there plans for batch conversion? =
+
+Batch conversion is a potential future feature, but it is not currently a priority.
+
+= Will there be an SVG editor built into the plugin? =
+
+Possibly, but in a limited form.
+
+Any editing features would focus on simple adjustments, not full design capabilities.
+
+e.g. background removal, colour correction, hiding unwanted elements
+
+= Will this integrate with WooCommerce? =
+
+A premium feature is being considered that would allow customers to upload images and convert them to SVGs for print-on-demand workflows using WooCommerce.
+
+= Why not include full design tools? =
+
+This plugin is intentionally focused.
+
+It is not meant to replace professional vector tools like Krita or Inkscape.
+
+Instead, it aims to do one thing well: convert simple graphics into clean SVGs quickly.
+
+= What is the long-term goal of the plugin? =
+
+To remain:
+
+- Simple
+- Fast
+- Reliable
+- Focused
+
+New features will be added carefully to avoid unnecessary complexity.
+
 == Screenshots ==
 
 1. Convert image interface
