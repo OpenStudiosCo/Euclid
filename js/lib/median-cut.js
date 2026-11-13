@@ -1,7 +1,7 @@
 /**
  * Median-cut colour quantization (Inkscape-style posterize input for Potrace layers).
- * Returns an indexed colour map + palette, similar to ImageTracer.colorquantization
- * but with better separation of distinct hues at low colour counts.
+ * Returns an indexed colour map + palette for ColourTracer quantisation,
+ * with better separation of distinct hues at low colour counts.
  */
 
 /**

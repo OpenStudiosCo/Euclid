@@ -1,11 +1,12 @@
 
 // Integrations
-import ImagetracerIntegration from "./integrations/ImagetracerIntegration.js";
+import ColourIntegration from "./integrations/ColourIntegration.js";
 import PotraceIntegration from "./integrations/PotraceIntegration.js";
 
 // UI
 import LaunchButton from "./ui/LaunchButton.js";
 import PreviewArea        from "./ui/PreviewArea.js";
+import SourceImage        from "./ui/SourceImage.js";
 import Tools              from "./ui/Tools.js";
 
 const configRaw = document.getElementById('wp-script-module-data-ositv-admin-bootstrap');
@@ -34,20 +35,26 @@ window.ositv.init = ($) => {
     // Add our Convert to Vector button
     window.ositv.launchButton = new LaunchButton($);
 
-    // SVG preview and tools
+    // SVG preview. The selector is recorded after the node exists.
     window.ositv.preview = new PreviewArea($);
-    window.ositv.tools   = new Tools($);
+    window.ositv.selectors.preview = $("#ositv-vector-preview");
 
-    // Imagetracer integration
-    window.ositv.imagetracer = new ImagetracerIntegration($);
+    // The Media Library preview image. Tracing keeps using this URL; the
+    // source overlay only paints adjustments on top of it.
+    const sourceImg = document.querySelector('img[id^="image-preview-"]')
+        || document.querySelector('.imgedit-crop-wrap > img');
+    window.ositv.src = sourceImg ? (sourceImg.currentSrc || sourceImg.src) : '';
 
-    // Potrace integration
-    window.ositv.potrace = new PotraceIntegration($);
+    // Tracing integrations (constructed before Tools so the panel can sync controls)
+    window.ositv.colour = new ColourIntegration();
+    window.ositv.potrace = new PotraceIntegration();
 
-    // Source image.
-    window.ositv.src = $(".imgedit-crop-wrap img").attr("src");
+    window.ositv.sourceImage = new SourceImage(sourceImg);
 
-    // Initialise the preview area by setting the method.
+    // Output Options panel
+    window.ositv.tools = new Tools($);
+
+    // Record the method. The traced grid waits for Convert to Vector.
     window.ositv.changeMethod();
 
 }
@@ -57,10 +64,8 @@ window.ositv.init = ($) => {
  */
 window.ositv.initialSettings = ($) => {
     let settings = {
-        method: "imagetracer",
-        selectors: {
-            preview: $(".imgedit-crop-preview"),
-        }
+        method: "colour",
+        selectors: {},
     };
     for (let key in settings) {
         let value = settings[key];
@@ -77,7 +82,7 @@ window.ositv.save = function () {
         window.ositv.potrace.save();
     }
     else {
-        window.ositv.imagetracer.save();
+        window.ositv.colour.save();
     }
 
 }
@@ -110,10 +115,13 @@ window.ositv.submitFile = function (svg) {
 }
 
 /**
- * Changes the active vectorisation library and displayed tools.
+ * Changes the active vectorisation method and refreshes the preview.
  */
 window.ositv.changeMethod = function () {
     const method = jQuery("#ositv-vectorisation-method").val();
     window.ositv.method = method;
+    if (window.ositv.sourceImage) {
+        window.ositv.sourceImage.renderActiveAdjustments();
+    }
     window.ositv.preview.loadSVG();
 }

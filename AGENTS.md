@@ -42,7 +42,7 @@ For example, this plugin distinguishes between:
 - **Bootstrap (PHP)** — WordPress registration, script/style enqueue, AJAX save and SVG sanitisation.
 - **Composition root (`js/admin.js`)** — wires UI and integrations onto `window.ositv`.
 - **UI modules** — Media Library chrome: launch control, tools panel and preview surface.
-- **Integrations** — adapters around tracing libraries (Potrace, ImageTracer).
+- **Integrations** — adapters around tracing methods (Potrace for B&W; ColourIntegration for colour).
 - **Vendor** — third-party libraries; treat as dependencies, not style references for new first-party code.
 
 These concepts are more meaningful here than forcing everything into generic models, views and controllers.
@@ -174,7 +174,8 @@ For new work, prefer the conventions demonstrated by the first-party files on `m
 - `js/ui/PreviewArea.js` — preview surface ownership and method-aware `loadSVG()`.
 - `js/ui/Tools.js` — output options panel and method selector.
 - `js/integrations/PotraceIntegration.js` — black-and-white tracing adapter with `createSVG`, `preview` and `save`.
-- `js/integrations/ImagetracerIntegration.js` — colour tracing adapter with the same integration surface.
+- `js/integrations/ColourIntegration.js` — colour tracing adapter with the same integration surface.
+- `js/lib/ColourTracer.js` — first-party colour algorithm (quantize → stacked masks → Potrace).
 - `css/admin.css` — minimal admin styling that extends WordPress image-editor classes rather than inventing a parallel design system.
 
 These are the hand-written baselines for WordPress integration, client composition, UI injection and tracing adapters.
@@ -194,7 +195,8 @@ Do not treat `vendor/` libraries as formatting or architecture references for ne
 - `openstudios-image-to-vector-converter.php` — plugin entry point and server-side save path.
 - `js/admin.js` — browser composition root for the Media Library editor extension.
 - `js/ui/` — DOM/UI modules that extend the WordPress image editor.
-- `js/integrations/` — adapters around vectorisation libraries.
+- `js/integrations/` — adapters around vectorisation methods.
+- `js/lib/` — first-party tracing helpers (ColourTracer, median-cut, image adjust, presets).
 - `css/` — admin styles for the editor UI.
 - `vendor/` — third-party tracing and sanitisation libraries.
 - `assets/` — WordPress.org / store screenshots and icons.
@@ -216,7 +218,7 @@ New browser subsystems should normally be integrated into that tree, for example
 - `window.ositv.preview`
 - `window.ositv.tools`
 - `window.ositv.potrace`
-- `window.ositv.imagetracer`
+- `window.ositv.colour`
 - `window.ositv.method`
 - `window.ositv.src`
 
@@ -256,7 +258,7 @@ There is no need for a generic plugin framework around every new tracer.
 
 Before introducing a new method:
 
-1. Inspect `PotraceIntegration` and `ImagetracerIntegration` on `master`.
+1. Inspect `PotraceIntegration` and `ColourIntegration`.
 2. Decide whether the work belongs in an existing integration or a new integration class beside them.
 3. Wire construction and method switching through `js/admin.js` and `js/ui/Tools.js` in the same style as the existing methods.
 4. Keep `preview()` and `save()` as the public surface unless there is a strong reason to change that contract.
@@ -275,7 +277,7 @@ Examples from the reference implementations:
 - `PreviewArea`
 - `Tools`
 - `PotraceIntegration`
-- `ImagetracerIntegration`
+- `ColourIntegration`
 
 Prefer named function exports for reusable procedures without independent lifecycle or state.
 

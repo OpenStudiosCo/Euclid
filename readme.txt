@@ -85,11 +85,12 @@ The plugin is not designed for full photo vectorisation. Complex images typicall
 
 = Will more advanced tracing options be added? =
 
-Future updates will include:
+Output Options already includes mode-specific presets (for example Silhouette or Logo), primary sliders, and an Advanced section for raw Potrace controls.
 
-- Background removal for colour tracing
-- Presets for useful default profiles
-- Customisation settings for going further
+Future updates may still include:
+
+- More background-removal controls for colour tracing
+- Further customisation as needed
 
 These will be added carefully to keep the plugin simple and easy to use.
 

@@ -1,33 +1,52 @@
 /**
  * Inkscape-style colour tracing: quantize → stacked masks → Potrace per layer.
  *
- * Quantization uses median-cut (closer to Inkscape’s posterize step than
- * ImageTracer’s grid-sampled k-means). Curve fitting is Potrace.
+ * Quantization uses median-cut. Curve fitting is Potrace. Optional hue,
+ * saturation and three-stop levels run before quantization.
  */
 
-import { quantizeMedianCut } from '../lib/median-cut.js';
-import { traceMask } from '../lib/potrace-mask.js';
+import { applyHueSaturationLevels } from './image-adjust.js';
+import { quantizeMedianCut } from './median-cut.js';
+import { traceMask } from './potrace-mask.js';
 
 const ALPHA_CUTOFF = 32;
-const DEFAULT_COLORS = 8;
+const DEFAULT_COLOURS = 8;
 
 /**
- * @typedef {Object} ColorPotraceOptions
+ * @typedef {Object} ColourTracerOptions
  * @property {number} [numberofcolors]
+ * @property {number} [hue]
+ * @property {number} [saturation]
+ * @property {number} [levelsDark]
+ * @property {number} [levelsCenter]
+ * @property {number} [levelsLight]
  * @property {boolean|string} [removeBackground] true | false | 'auto'
  * @property {number} [turdsize]
+ * @property {number} [alphamax]
+ * @property {boolean} [optcurve]
+ * @property {number} [opttolerance]
+ * @property {string} [turnpolicy]
  */
 
-export default class ColorPotrace {
+export default class ColourTracer {
 
     /**
-     * @param {ColorPotraceOptions} [options]
+     * @param {ColourTracerOptions} [options]
      */
     constructor(options = {}) {
         this.options = {
-            numberofcolors: DEFAULT_COLORS,
+            numberofcolors: DEFAULT_COLOURS,
+            hue: 0,
+            saturation: 0,
+            levelsDark: 0,
+            levelsCenter: 128,
+            levelsLight: 255,
             removeBackground: 'auto',
             turdsize: 20,
+            alphamax: 1,
+            optcurve: false,
+            opttolerance: 0.2,
+            turnpolicy: 'black',
             ...options,
         };
     }
@@ -35,10 +54,17 @@ export default class ColorPotrace {
     /**
      * Update runtime options (e.g. from the Tools UI).
      *
-     * @param {ColorPotraceOptions} options
+     * @param {ColourTracerOptions} options
      */
     setOptions(options = {}) {
         this.options = { ...this.options, ...options };
+    }
+
+    /**
+     * @returns {ColourTracerOptions}
+     */
+    getOptions() {
+        return { ...this.options };
     }
 
     /**
@@ -52,7 +78,7 @@ export default class ColorPotrace {
             .then((imgd) => this._traceImageData(imgd))
             .then(callbackFn)
             .catch((err) => {
-                console.error('ColorPotrace failed:', err);
+                console.error('ColourTracer failed:', err);
                 callbackFn('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
             });
     }
@@ -83,6 +109,14 @@ export default class ColorPotrace {
      * @returns {Promise<string>}
      */
     async _traceImageData(imgd) {
+        applyHueSaturationLevels(imgd, {
+            hue: this.options.hue,
+            saturation: this.options.saturation,
+            levelsDark: this.options.levelsDark,
+            levelsCenter: this.options.levelsCenter,
+            levelsLight: this.options.levelsLight,
+        });
+
         const width = imgd.width;
         const height = imgd.height;
         const data = imgd.data;
@@ -96,15 +130,15 @@ export default class ColorPotrace {
             }
         }
 
-        const colorCount = Math.max(2, Math.min(32, this.options.numberofcolors | 0));
+        const colourCount = Math.max(2, Math.min(32, this.options.numberofcolors | 0));
         const { indexed: rawIndexed, palette } = quantizeMedianCut(
             imgd,
-            colorCount,
+            colourCount,
             transparent
         );
 
         // Collapse anti-alias / near-duplicate swatches before stacking.
-        const merged = this._mergeSimilarColors(palette, rawIndexed, 36);
+        const merged = this._mergeSimilarColours(palette, rawIndexed, 36);
         let { palette: workingPalette, indexed } = merged;
 
         // Sort palette dark → light; remap indices (Inkscape stack order).
@@ -138,16 +172,16 @@ export default class ColorPotrace {
         }
 
         Potrace.setParameter({
-            alphamax: 1,
-            optcurve: false,
-            opttolerance: 0.2,
+            alphamax: this.options.alphamax,
+            optcurve: this.options.optcurve,
+            opttolerance: this.options.opttolerance,
             turdsize: this.options.turdsize,
-            turnpolicy: 'black',
+            turnpolicy: this.options.turnpolicy,
         });
 
         const layers = [];
-        for (let colorIndex = 0; colorIndex < layerCount; colorIndex++) {
-            const mask = this._buildStackedMask(indexed, width, height, colorIndex);
+        for (let colourIndex = 0; colourIndex < layerCount; colourIndex++) {
+            const mask = this._buildStackedMask(indexed, width, height, colourIndex);
             if (!this._maskHasForeground(mask)) {
                 continue;
             }
@@ -155,7 +189,7 @@ export default class ColorPotrace {
             if (!traced.d) {
                 continue;
             }
-            const c = sortedPalette[colorIndex];
+            const c = sortedPalette[colourIndex];
             layers.push({
                 d: traced.d,
                 fill: `rgb(${c.r},${c.g},${c.b})`,
@@ -180,7 +214,7 @@ export default class ColorPotrace {
      * @param {Int16Array} indexed
      * @param {number} threshold
      */
-    _mergeSimilarColors(palette, indexed, threshold) {
+    _mergeSimilarColours(palette, indexed, threshold) {
         const n = palette.length;
         const parent = new Int16Array(n);
         for (let i = 0; i < n; i++) {
@@ -354,15 +388,15 @@ export default class ColorPotrace {
      * @param {Int16Array} indexed
      * @param {number} width
      * @param {number} height
-     * @param {number} colorIndex
+     * @param {number} colourIndex
      * @returns {ImageData}
      */
-    _buildStackedMask(indexed, width, height, colorIndex) {
+    _buildStackedMask(indexed, width, height, colourIndex) {
         const mask = new ImageData(width, height);
         const data = mask.data;
         for (let i = 0; i < indexed.length; i++) {
             const idx = indexed[i];
-            const on = idx >= 0 && idx <= colorIndex;
+            const on = idx >= 0 && idx <= colourIndex;
             const v = on ? 0 : 255;
             const p = i * 4;
             data[p] = v;

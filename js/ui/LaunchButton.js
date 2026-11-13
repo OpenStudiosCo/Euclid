@@ -12,6 +12,11 @@ export default class LaunchButton {
 
         const ositvContainer = $(".imgedit-ositv");
         ositvContainer.toggleClass("imgedit-panel-active");
+
+        // The traced grid is drawn only once this panel is open.
+        if (window.ositv.preview && window.ositv.preview.isOpen()) {
+            window.ositv.preview.loadSVG();
+        }
     });
 
   }

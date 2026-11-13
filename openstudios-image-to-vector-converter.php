@@ -41,12 +41,13 @@ function ositv_enqueue_media_edit_js($hook) {
 
     if (in_array($hook, ['upload.php', 'post.php', 'post-new.php'])) {
 
+        // The fifth argument is the media type, not "load in the footer".
+        // Passing true prints media="1", and the browser then ignores the file.
         wp_enqueue_style(
             'ositv-admin-styles',
             plugin_dir_url(__FILE__) . 'css/admin.css',
             [],
-            '1.0.1',
-            true
+            '1.0.1'
         );
 
         wp_enqueue_script(
@@ -54,14 +55,6 @@ function ositv_enqueue_media_edit_js($hook) {
              plugin_dir_url(__FILE__) . 'vendor/potrace.js',
              ['jquery'],
              '1.16',
-             true
-        );
-
-        wp_enqueue_script(
-             'ositv-libs-imagetracer',
-             plugin_dir_url(__FILE__) . 'vendor/imagetracer_v1.2.6.js',
-             ['jquery'],
-             '1.2.6',
              true
         );
 
