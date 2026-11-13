@@ -3,7 +3,7 @@
 /**
  * Plugin Name:  Open Studios Image to Vector Converter
  * Description:  Convert raster images into clean SVGs inside WordPress.
- * Version:      1.0.0
+ * Version:      1.0.1
  * Author:       Open Studios
  * Author URI:   https://openstudios.xyz
  * Text Domain:  openstudios-image-to-vector-converter
@@ -41,12 +41,13 @@ function ositv_enqueue_media_edit_js($hook) {
 
     if (in_array($hook, ['upload.php', 'post.php', 'post-new.php'])) {
 
+        // The fifth argument is the media type, not "load in the footer".
+        // Passing true prints media="1", and the browser then ignores the file.
         wp_enqueue_style(
             'ositv-admin-styles',
             plugin_dir_url(__FILE__) . 'css/admin.css',
             [],
-            '1.0',
-            true
+            '1.0.1'
         );
 
         wp_enqueue_script(
@@ -57,21 +58,13 @@ function ositv_enqueue_media_edit_js($hook) {
              true
         );
 
-        wp_enqueue_script(
-             'ositv-libs-imagetracer',
-             plugin_dir_url(__FILE__) . 'vendor/imagetracer_v1.2.6.js',
-             ['jquery'],
-             '1.2.6',
-             true
-        );
-
         // Handle WP 6.9 changes
         // @see https://www.reddit.com/r/Wordpress/comments/1peoabm/wordpress_69_enqueue_script_issue_fix/
         wp_register_script_module(
             'ositv-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
             [],
-            '1.0.0',
+            '1.0.1',
             array( 'in_footer' => true )
         );
 
@@ -89,6 +82,35 @@ add_filter( 'script_module_data_ositv-admin-bootstrap', function ( array $data )
 
     return $data; // Must return an array
 });
+
+/**
+ * The image editor expects a raster file. For an SVG it exits before the
+ * JSON response, and the Attachment details pane stays blank.
+ * Answer first with a notice the editor knows how to show.
+ */
+add_action('wp_ajax_image-editor', 'ositv_refuse_vector_image_editor', 0);
+function ositv_refuse_vector_image_editor() {
+    $attachment_id = isset($_POST['postid']) ? (int) $_POST['postid'] : 0;
+
+    if (!$attachment_id || get_post_mime_type($attachment_id) !== 'image/svg+xml') {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $attachment_id)) {
+        return;
+    }
+
+    check_ajax_referer("image_editor-$attachment_id");
+
+    $html = '<div class="notice notice-info inline ositv-vector-unavailable" role="status"><p>'
+        . esc_html__('Vector editing is unavailable.', 'openstudios-image-to-vector-converter')
+        . '</p></div>';
+
+    wp_send_json_success([
+        'message' => false,
+        'html'    => $html,
+    ]);
+}
 
 add_action('wp_ajax_ositv_save_svg', 'ositv_save_svg');
 function ositv_save_svg() {
@@ -167,10 +189,19 @@ function ositv_save_svg() {
     $attach_data = wp_generate_attachment_metadata($new_attachment_id, $file_path);
     wp_update_attachment_metadata($new_attachment_id, $attach_data);
 
-    wp_send_json_success([
-        'id'  => $new_attachment_id,
-        'url' => $file_url,
-    ]);
+    // The same payload the media grid uses for an uploaded file, so the
+    // library under the editor modal can show this SVG without a reload.
+    require_once ABSPATH . 'wp-admin/includes/media.php';
+    $prepared = wp_prepare_attachment_for_js($new_attachment_id);
+
+    if (!$prepared) {
+        wp_send_json_success([
+            'id'  => $new_attachment_id,
+            'url' => $file_url,
+        ]);
+    }
+
+    wp_send_json_success($prepared);
 }
 
 add_filter('plugin_row_meta', function ($links, $file) {

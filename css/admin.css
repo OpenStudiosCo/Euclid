@@ -1,4 +1,305 @@
-.imgedit-crop-preview {
-    width: 600px;
-    min-height: 400px;
+/*
+ * Second checkerboard, under the editor picture. Hidden until Convert to
+ * Vector adds imgedit-panel-active. The script then copies the source
+ * grid's size and pattern; the margin is the gap so the two grids do not touch.
+ * The fallback pattern matches WordPress's .imgedit-crop-wrap.
+ */
+#ositv-vector-preview {
+    display: none;
+    position: relative;
+    box-sizing: border-box;
+    margin: 16px 0 0;
+    padding: 0;
+    overflow: hidden;
+    line-height: 0;
+    background-color: #fff;
+    background-image:
+        linear-gradient(45deg, #c3c4c7 25%, transparent 25%, transparent 75%, #c3c4c7 75%, #c3c4c7),
+        linear-gradient(45deg, #c3c4c7 25%, transparent 25%, transparent 75%, #c3c4c7 75%, #c3c4c7);
+    background-position: 0 0, 10px 10px;
+    background-size: 20px 20px;
+}
+
+#ositv-vector-preview.imgedit-panel-active:not(:empty) {
+    display: block;
+}
+
+#ositv-vector-preview svg {
+    display: block;
+    max-width: none;
+}
+
+.ositv-vector-unavailable {
+    margin: 16px;
+}
+
+/*
+ * The editor column beside the picture is narrow. Each row is a label line
+ * (name on the left, value and reset on the right) and a control that spans
+ * the full column, so every slider and select shares the same edges.
+ */
+/*
+ * WordPress hides .imgedit-group-controls children until the tool is active.
+ * An unconditional display here would beat that and leave Method on screen
+ * before Convert to Vector is chosen.
+ */
+#ositv-container.imgedit-panel-active .ositv-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "label meta"
+        "control control";
+    column-gap: 0.5rem;
+    row-gap: 0.2rem;
+    align-items: center;
+    margin: 0.55em 0;
+    min-width: 0;
+}
+
+#ositv-container .ositv-field > label,
+#ositv-container .ositv-field > .ositv-field-label {
+    grid-area: label;
+    margin: 0;
+    line-height: 1.3;
+}
+
+#ositv-container .ositv-field > .ositv-field-meta {
+    grid-area: meta;
+}
+
+#ositv-container .ositv-field > select,
+#ositv-container .ositv-field > input,
+#ositv-container .ositv-field > .ositv-levels {
+    grid-area: control;
+}
+
+#ositv-container .ositv-field select,
+#ositv-container .ositv-field input[type="range"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+}
+
+#ositv-container .ositv-field input[type="number"] {
+    width: 5.5rem;
+    margin: 0;
+    justify-self: start;
+}
+
+#ositv-container .ositv-field:has(> input[type="checkbox"]) {
+    grid-template-areas: "label control";
+}
+
+#ositv-container .ositv-field input[type="checkbox"] {
+    margin: 0;
+    justify-self: end;
+}
+
+#ositv-container .ositv-field-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+#ositv-container .ositv-value {
+    min-width: 2.6em;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+#ositv-container .ositv-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: transparent;
+    box-shadow: none;
+    color: #646970;
+    line-height: 0;
+    cursor: pointer;
+}
+
+#ositv-container .ositv-reset:hover,
+#ositv-container .ositv-reset:focus {
+    background: #f0f0f1;
+    color: #1d2327;
+    box-shadow: none;
+}
+
+#ositv-container .ositv-reset:focus-visible {
+    outline: 2px solid #2271b1;
+    outline-offset: 1px;
+}
+
+#ositv-container .ositv-section {
+    margin: 0.85em 0 0.15em;
+    padding-top: 0.75em;
+    border-top: 1px solid #dcdcde;
+}
+
+#ositv-container .ositv-section-title {
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+#ositv-container .ositv-section-note {
+    margin: 0.15em 0 0.55em;
+    color: #646970;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+#ositv-container .ositv-actions {
+    margin: 1em 0 0;
+}
+
+/* WordPress admin display rules override the hidden attribute. */
+#ositv-container.is-bw .ositv-colour-only,
+#ositv-container.is-colour .ositv-bw-only {
+    display: none !important;
+}
+
+#ositv-container .ositv-advanced {
+    margin: 0.65em 0 0.2em;
+}
+
+#ositv-container .ositv-advanced summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 0.35em;
+}
+
+/* Author display rules in wp-admin can override the user-agent details hide. */
+#ositv-container details:not([open]) > :not(summary) {
+    display: none !important;
+}
+
+#ositv-container .ositv-levels,
+#ositv-container .ositv-levels-track {
+    width: 100%;
+    min-width: 0;
+}
+
+#ositv-container .ositv-levels-track {
+    position: relative;
+    height: 28px;
+    touch-action: none;
+    cursor: ew-resize;
+    user-select: none;
+}
+
+#ositv-container .ositv-levels-track::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    background: #dcdcde;
+    border-radius: 999px;
+}
+
+#ositv-container .ositv-levels-span {
+    position: absolute;
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    background: #2271b1;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+#ositv-container .ositv-levels-handle {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #1d2327;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: none;
+    transform: translate(-50%, -50%);
+    cursor: ew-resize;
+}
+
+#ositv-container .ositv-levels-handle[data-stop="dark"] {
+    background: #1d2327;
+}
+
+#ositv-container .ositv-levels-handle[data-stop="center"] {
+    z-index: 2;
+    background: #787c82;
+}
+
+#ositv-container .ositv-levels-handle[data-stop="light"] {
+    background: #fff;
+}
+
+#ositv-container .ositv-levels-handle.is-dragging {
+    z-index: 3;
+}
+
+#ositv-container .ositv-levels-handle:focus-visible {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+#ositv-container .ositv-levels-readout {
+    display: grid;
+    grid-template-columns: 1.35fr 0.8fr 1.35fr;
+    gap: 0.25rem;
+    margin-top: 0.15rem;
+    color: #646970;
+    font-size: 11px;
+    line-height: 1.25;
+}
+
+#ositv-container .ositv-levels-readout span:nth-child(2) {
+    text-align: center;
+}
+
+#ositv-container .ositv-levels-readout span:last-child {
+    text-align: right;
+}
+
+#ositv-container .ositv-levels-readout strong {
+    display: block;
+    color: #1d2327;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Adjusted pixels sit on top of the editor image. The original file is left
+ * in place underneath so tracing and WordPress still read that URL.
+ */
+.ositv-source-preview {
+    display: none;
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.ositv-source-preview.is-live {
+    display: block;
+}
+
+img.ositv-source-adjusted {
+    visibility: hidden;
 }
