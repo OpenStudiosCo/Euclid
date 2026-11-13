@@ -1,100 +1,33 @@
 /**
-  * ImageTracer integration.
-  *
-  * Manages all app elements relating to ImageTracer functionality.
-  */
+ * Colour vectorisation integration.
+ *
+ * Quantization + Inkscape-style stacked Potrace layers via ColorPotrace.
+ * Presets / fine-tune UI come later; this pass uses all-rounder defaults.
+ */
+
+import ColorPotrace from './ColorPotrace.js';
 
 export default class ImagetracerIntegration {
 
-    controls;
+    /** @type {ColorPotrace} */
+    colorPotrace;
 
-    constructor($) {
-
-        this.controls = ImageTracer.checkoptions();
-        this.controls.numberofcolors = 4;
-        this.controls.strokewidth = 2;
-        this.controls.viewbox = true;
-        this.controls.ltres = 2;
-        this.controls.qtres = 2;
-        this.controls.pathomit = 10;
-        this.controls.blurradius = 1;
-        this.controls.blurdelta = 20;
-        this.controls.colorsampling = 2;
-        this.controls.rightangleenhance = true;
-        this.controls.background = "FFFFFF",
-        this.controls.transparent = true
-
-        // MVP phase 2
-        //
-        //
-        // $('.imagetracerConfig').on('change', () => {
-        //     console.log('hiii');
-        //     this.preview(app);
-        // });
-
-        // $('.imagetracer.controls .ui.slider.colours').slider({
-        //     min: 2,
-        //     max: 16,
-        //     start: 4,
-        //     step: 2,
-        //     onChange: () => { this.preview(app) }
-        // });
-        // $('.imagetracer.controls .ui.slider.mincolorratio').slider({
-        //   min: 0,
-        //   max: 800,
-        //   start: 0,
-        //   step: 100,
-        //   onChange: () => { this.preview(app) }
-        // });
+    constructor() {
+        this.colorPotrace = new ColorPotrace({
+            numberofcolors: 8,
+            removeBackground: 'auto',
+            turdsize: 20,
+        });
     }
 
     preview() {
-        // let preset = $('.preset').find(":selected").text().toLowerCase();
-        // app.vector.imagetracer.controls.numberofcolors = $('.ui.slider.colours').slider('get value');
-        // app.vector.imagetracer.controls.mincolorratio = $('.mincolorratio').val();
-        // app.vector.imagetracer.controls.colorquantcycles = $('.colorquantcycles').val();
-        // app.vector.imagetracer.controls.ltres = $('.ltres').val();
-        // app.vector.imagetracer.controls.qtres = $('.qtres').val();
-        // app.vector.imagetracer.controls.pathomit = $('.pathomit').val();
-        // app.vector.imagetracer.controls.rightangleenhance =  $('.rightangleenhance').is(":checked");
-        // app.vector.imagetracer.controls.layering =  $('.layering').is(":checked");
-        // app.vector.imagetracer.controls.blurradius =  $('.blurradius').val();
-        // app.vector.imagetracer.controls.blurdelta =  $('.blurdelta').val();
-        // Potrace.setParameter({
-        //   alphamax: $('.alphamax').val(),
-        //   optcurve: $('.optcurve').is(":checked"),
-        //   opttolerance: $('.opttolerance').val(),
-        //   turdsize: $('.turdsize').val(),
-        //   turnpolicy: $('.turnpolicy').find(":selected").text().toLowerCase()
-        // });
-
-        ImageTracer.imageToSVG(window.ositv.src, function(svg) {
-            const previewBox = jQuery(".imgedit-crop-preview");
+        this.colorPotrace.createSVG(window.ositv.src, function (svg) {
+            const previewBox = jQuery('.imgedit-crop-preview');
             previewBox.html(svg);
-        }, 'sharp');
+        });
     }
 
-    save( ) {
-        ImageTracer.imageToSVG(window.ositv.src, window.ositv.submitFile, 'sharp');
+    save() {
+        this.colorPotrace.createSVG(window.ositv.src, window.ositv.submitFile);
     }
-
-    // Is this use at all? Check Manifold src.
-    //
-    //
-    // // Duplicates the image programatically so we can get its original dimensions.
-    // getImageDimensions() {
-    //     var original_image = document.getElementById('original-image');
-    //     var img = document.createElement('img');
-    //     img.src = original_image.src;
-
-    //     // Get the image data from a virtual canvas.
-    //     var canvas = document.createElement('canvas');
-    //     canvas.width = img.width;
-    //     canvas.height = img.height;
-    //     var context = canvas.getContext('2d');
-    //     context.drawImage(img,0,0);
-
-    //     return context.getImageData(0, 0, img.width, img.height);
-    // }
-
 }

@@ -31,6 +31,15 @@ export default class PotraceIntegration {
     }
 
     createSVG(src, callbackFn) {
+        // Re-apply B&W params so colour-mode runs cannot leak settings.
+        Potrace.setParameter({
+            alphamax: 1,
+            optcurve: false,
+            opttolerance: 0.2,
+            turdsize: 100,
+            turnpolicy: "black"
+        });
+
         // Create an SVG from data and settings, draw to screen.
         Potrace.clear();
         Potrace.loadImageFromSrc(src);
