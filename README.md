@@ -42,6 +42,10 @@ Extends the native WordPress Media Library image editor with options to convert 
 
 ## Changelog
 
+### 1.0.1
+- Colour tracing improvements
+- Presets and customisation
+
 ### 1.0.0
 - Initial release: basic PNG/JPG to SVG conversion.
 - Admin interface and Media Library integration.

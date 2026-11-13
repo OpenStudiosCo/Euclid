@@ -3,7 +3,7 @@
 /**
  * Plugin Name:  Open Studios Image to Vector Converter
  * Description:  Convert raster images into clean SVGs inside WordPress.
- * Version:      1.0.0
+ * Version:      1.0.1
  * Author:       Open Studios
  * Author URI:   https://openstudios.xyz
  * Text Domain:  openstudios-image-to-vector-converter
@@ -45,7 +45,7 @@ function ositv_enqueue_media_edit_js($hook) {
             'ositv-admin-styles',
             plugin_dir_url(__FILE__) . 'css/admin.css',
             [],
-            '1.0',
+            '1.0.1',
             true
         );
 
@@ -71,7 +71,7 @@ function ositv_enqueue_media_edit_js($hook) {
             'ositv-admin-bootstrap',
             plugin_dir_url(__FILE__) . 'js/admin.js',
             [],
-            '1.0.0',
+            '1.0.1',
             array( 'in_footer' => true )
         );
 

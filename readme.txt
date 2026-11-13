@@ -4,7 +4,7 @@ Contributors: openstudios
 Tags: svg, vector, image, graphics, media
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,11 @@ This plugin is best suited for logos, icons, and flat illustrations.
 3. Open an image in the Media Library editor to begin
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Colour tracing improvements
+* Presets and customisation
 
 = 1.0.0 =
 
