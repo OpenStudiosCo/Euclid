@@ -19,7 +19,7 @@ Treat code as architectural storytelling.
 The structure of the plugin should reveal its essential concepts, responsibilities and relationships. Another developer should be able to understand how something works by exploring the shape of the code itself.
 
 - Name elements after their purpose in the conversion workflow (launch, tools, preview, integration, save).
-- Organise related concepts into folders that communicate their purpose (`js/ui/`, `js/integrations/`, `js/lib/`).
+- Organise related concepts into folders that communicate their purpose (`js/ui/`, `js/integrations/`).
 - Prefer structures that make the relationships between elements apparent.
 - Write methods that describe meaningful actions rather than implementation mechanics.
 - Make important behaviour discoverable through names, structure and composition.
@@ -42,8 +42,7 @@ For example, this plugin distinguishes between:
 - **Bootstrap (PHP)** — WordPress registration, script/style enqueue, AJAX save and SVG sanitisation.
 - **Composition root (`js/admin.js`)** — wires UI and integrations onto `window.ositv`.
 - **UI modules** — Media Library chrome: launch control, tools panel and preview surface.
-- **Integrations** — adapters around tracing libraries (Potrace, ImageTracer, and any colour-tracing successors).
-- **Lib helpers** — small reusable algorithms that support integrations without owning WordPress or DOM lifecycle.
+- **Integrations** — adapters around tracing libraries (Potrace, ImageTracer).
 - **Vendor** — third-party libraries; treat as dependencies, not style references for new first-party code.
 
 These concepts are more meaningful here than forcing everything into generic models, views and controllers.
@@ -167,9 +166,7 @@ Prefer concise, meaningful explanations over lengthy reports of routine actions.
 
 ## 3. Reference implementations
 
-The preferred examples of first-party style and structure are the original plugin files from `master` — written by hand before the colour-tracing feature branch — rather than newer experimental additions unless those additions have clearly become the established pattern.
-
-For new work, prefer the conventions demonstrated by:
+For new work, prefer the conventions demonstrated by the first-party files on `master`:
 
 - `openstudios-image-to-vector-converter.php` — WordPress bootstrap, enqueue, script-module data, AJAX save, capability checks, SVG sanitisation and Media Library attachment creation.
 - `js/admin.js` — composition root: initialise `window.ositv`, construct UI and integrations, switch method, submit SVG.
@@ -180,9 +177,9 @@ For new work, prefer the conventions demonstrated by:
 - `js/integrations/ImagetracerIntegration.js` — colour tracing adapter with the same integration surface.
 - `css/admin.css` — minimal admin styling that extends WordPress image-editor classes rather than inventing a parallel design system.
 
-These represent preferred approaches to WordPress integration, client composition, UI injection and tracing adapters.
+These are the hand-written baselines for WordPress integration, client composition, UI injection and tracing adapters.
 
-When inspecting history, use the `master` versions of those paths as the baseline of good hand-written code. Feature-branch files such as `js/integrations/ColorPotrace.js` and `js/lib/*` should follow those conventions; do not treat unfinished or exploratory branch code as authority merely because it is newer.
+Do not treat other first-party files as style or architecture authority unless they already exist on `master`.
 
 However, do not mechanically copy these implementations into unrelated subsystems.
 
@@ -198,7 +195,6 @@ Do not treat `vendor/` libraries as formatting or architecture references for ne
 - `js/admin.js` — browser composition root for the Media Library editor extension.
 - `js/ui/` — DOM/UI modules that extend the WordPress image editor.
 - `js/integrations/` — adapters around vectorisation libraries.
-- `js/lib/` — small shared helpers used by integrations (when needed).
 - `css/` — admin styles for the editor UI.
 - `vendor/` — third-party tracing and sanitisation libraries.
 - `assets/` — WordPress.org / store screenshots and icons.
@@ -261,7 +257,7 @@ There is no need for a generic plugin framework around every new tracer.
 Before introducing a new method:
 
 1. Inspect `PotraceIntegration` and `ImagetracerIntegration` on `master`.
-2. Decide whether the work belongs in an existing integration, a new integration class, or a small `js/lib/` helper used by an integration.
+2. Decide whether the work belongs in an existing integration or a new integration class beside them.
 3. Wire construction and method switching through `js/admin.js` and `js/ui/Tools.js` in the same style as the existing methods.
 4. Keep `preview()` and `save()` as the public surface unless there is a strong reason to change that contract.
 
@@ -281,7 +277,7 @@ Examples from the reference implementations:
 - `PotraceIntegration`
 - `ImagetracerIntegration`
 
-Prefer named function exports for reusable procedures without independent lifecycle or state — for example algorithmic helpers under `js/lib/`.
+Prefer named function exports for reusable procedures without independent lifecycle or state.
 
 Choose the module structure that communicates responsibility most clearly.
 
@@ -398,7 +394,7 @@ This plugin lives inside WordPress admin UI that WordPress itself owns.
 - Treat attachment metadata, alt-text copying and source-id linkage as part of a complete save, not optional extras.
 - Leave `vendor/svg-sanitizer` alone unless the task is specifically about updating or replacing that dependency.
 
-When modifying gameplay-equivalent editor behaviour — preview, method switching, save — consider the complete interaction rather than only the underlying function.
+When modifying editor behaviour — preview, method switching, save — consider the complete interaction rather than only the underlying function.
 
 Do not assume a feature is complete merely because tracing returned an SVG string.
 
