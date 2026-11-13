@@ -29,6 +29,10 @@
     max-width: none;
 }
 
+.ositv-vector-unavailable {
+    margin: 16px;
+}
+
 /*
  * The editor column beside the picture is narrow. Each row is a label line
  * (name on the left, value and reset on the right) and a control that spans

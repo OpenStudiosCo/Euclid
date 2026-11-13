@@ -83,6 +83,35 @@ add_filter( 'script_module_data_ositv-admin-bootstrap', function ( array $data )
     return $data; // Must return an array
 });
 
+/**
+ * The image editor expects a raster file. For an SVG it exits before the
+ * JSON response, and the Attachment details pane stays blank.
+ * Answer first with a notice the editor knows how to show.
+ */
+add_action('wp_ajax_image-editor', 'ositv_refuse_vector_image_editor', 0);
+function ositv_refuse_vector_image_editor() {
+    $attachment_id = isset($_POST['postid']) ? (int) $_POST['postid'] : 0;
+
+    if (!$attachment_id || get_post_mime_type($attachment_id) !== 'image/svg+xml') {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $attachment_id)) {
+        return;
+    }
+
+    check_ajax_referer("image_editor-$attachment_id");
+
+    $html = '<div class="notice notice-info inline ositv-vector-unavailable" role="status"><p>'
+        . esc_html__('Vector editing is unavailable.', 'openstudios-image-to-vector-converter')
+        . '</p></div>';
+
+    wp_send_json_success([
+        'message' => false,
+        'html'    => $html,
+    ]);
+}
+
 add_action('wp_ajax_ositv_save_svg', 'ositv_save_svg');
 function ositv_save_svg() {
 
