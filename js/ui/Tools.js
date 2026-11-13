@@ -10,6 +10,7 @@ import {
     COLOUR_PRESETS,
     DEFAULT_BW_PRESET,
     DEFAULT_COLOUR_PRESET,
+    MAX_COLOURS,
 } from '../lib/trace-presets.js';
 import LevelsControl from './LevelsControl.js';
 
@@ -216,7 +217,7 @@ export default class Tools {
                         label: 'Colours',
                         param: 'numberofcolors',
                         min: 2,
-                        max: 32,
+                        max: MAX_COLOURS,
                         step: 1,
                         modeClass: 'ositv-colour-only',
                     })}

@@ -160,10 +160,19 @@ function ositv_save_svg() {
     $attach_data = wp_generate_attachment_metadata($new_attachment_id, $file_path);
     wp_update_attachment_metadata($new_attachment_id, $attach_data);
 
-    wp_send_json_success([
-        'id'  => $new_attachment_id,
-        'url' => $file_url,
-    ]);
+    // The same payload the media grid uses for an uploaded file, so the
+    // library under the editor modal can show this SVG without a reload.
+    require_once ABSPATH . 'wp-admin/includes/media.php';
+    $prepared = wp_prepare_attachment_for_js($new_attachment_id);
+
+    if (!$prepared) {
+        wp_send_json_success([
+            'id'  => $new_attachment_id,
+            'url' => $file_url,
+        ]);
+    }
+
+    wp_send_json_success($prepared);
 }
 
 add_filter('plugin_row_meta', function ($links, $file) {

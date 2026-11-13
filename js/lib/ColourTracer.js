@@ -8,6 +8,7 @@
 import { applyHueSaturationLevels } from './image-adjust.js';
 import { quantizeMedianCut } from './median-cut.js';
 import { traceMask } from './potrace-mask.js';
+import { MAX_COLOURS } from './trace-presets.js';
 
 const ALPHA_CUTOFF = 32;
 const DEFAULT_COLOURS = 8;
@@ -130,15 +131,20 @@ export default class ColourTracer {
             }
         }
 
-        const colourCount = Math.max(2, Math.min(32, this.options.numberofcolors | 0));
+        const colourCount = Math.max(2, Math.min(MAX_COLOURS, this.options.numberofcolors | 0));
         const { indexed: rawIndexed, palette } = quantizeMedianCut(
             imgd,
             colourCount,
             transparent
         );
 
-        // Collapse anti-alias / near-duplicate swatches before stacking.
-        const merged = this._mergeSimilarColours(palette, rawIndexed, 36);
+        // Collapse anti-alias duplicates before stacking. A fixed distance
+        // chains across a large palette and folds it into one fill.
+        const merged = this._mergeSimilarColours(
+            palette,
+            rawIndexed,
+            this._mergeDistance(colourCount)
+        );
         let { palette: workingPalette, indexed } = merged;
 
         // Sort palette dark → light; remap indices (Inkscape stack order).
@@ -208,7 +214,22 @@ export default class ColourTracer {
     }
 
     /**
-     * Merge palette entries within Euclidean RGB distance, remapping the index map.
+     * How close two swatches must be before one is discarded.
+     * Wide at logo counts, tight once the user has asked for a large palette.
+     *
+     * @param {number} colourCount
+     * @returns {number}
+     */
+    _mergeDistance(colourCount) {
+        const scaled = 36 * Math.sqrt(8 / Math.max(2, colourCount));
+        return Math.max(8, Math.min(36, scaled));
+    }
+
+    /**
+     * Fold each swatch into the nearest kept colour within `threshold`.
+     *
+     * Matching is not transitive. A chain of small steps must not pull
+     * distant colours into the same fill.
      *
      * @param {{ r: number, g: number, b: number, a?: number }[]} palette
      * @param {Int16Array} indexed
@@ -216,18 +237,6 @@ export default class ColourTracer {
      */
     _mergeSimilarColours(palette, indexed, threshold) {
         const n = palette.length;
-        const parent = new Int16Array(n);
-        for (let i = 0; i < n; i++) {
-            parent[i] = i;
-        }
-        const find = (i) => {
-            while (parent[i] !== i) {
-                parent[i] = parent[parent[i]];
-                i = parent[i];
-            }
-            return i;
-        };
-
         const counts = new Int32Array(n);
         for (let i = 0; i < indexed.length; i++) {
             const idx = indexed[i];
@@ -236,45 +245,38 @@ export default class ColourTracer {
             }
         }
 
-        const thresh2 = threshold * threshold;
+        const order = [];
         for (let i = 0; i < n; i++) {
-            for (let j = i + 1; j < n; j++) {
-                const a = palette[i];
-                const b = palette[j];
-                const dr = a.r - b.r;
-                const dg = a.g - b.g;
-                const db = a.b - b.b;
-                if (dr * dr + dg * dg + db * db <= thresh2) {
-                    const ri = find(i);
-                    const rj = find(j);
-                    if (ri === rj) {
-                        continue;
-                    }
-                    // Keep the more populous swatch as canonical.
-                    if (counts[ri] >= counts[rj]) {
-                        parent[rj] = ri;
-                        counts[ri] += counts[rj];
-                    } else {
-                        parent[ri] = rj;
-                        counts[rj] += counts[ri];
-                    }
+            order.push(i);
+        }
+        order.sort((a, b) => counts[b] - counts[a]);
+
+        const thresh2 = threshold * threshold;
+        const remap = new Int16Array(n);
+        const newPalette = [];
+
+        for (let k = 0; k < order.length; k++) {
+            const source = order[k];
+            const colour = palette[source];
+            let match = -1;
+            let best = thresh2;
+            for (let j = 0; j < newPalette.length; j++) {
+                const kept = newPalette[j];
+                const dr = colour.r - kept.r;
+                const dg = colour.g - kept.g;
+                const db = colour.b - kept.b;
+                const dist = dr * dr + dg * dg + db * db;
+                if (dist <= best) {
+                    best = dist;
+                    match = j;
                 }
             }
-        }
-
-        const rootToNew = new Map();
-        const newPalette = [];
-        for (let i = 0; i < n; i++) {
-            const root = find(i);
-            if (!rootToNew.has(root)) {
-                rootToNew.set(root, newPalette.length);
-                newPalette.push({ ...palette[root] });
+            if (match >= 0) {
+                remap[source] = match;
+            } else {
+                remap[source] = newPalette.length;
+                newPalette.push({ ...colour });
             }
-        }
-
-        const remap = new Int16Array(n);
-        for (let i = 0; i < n; i++) {
-            remap[i] = rootToNew.get(find(i));
         }
 
         const outIndexed = new Int16Array(indexed.length);

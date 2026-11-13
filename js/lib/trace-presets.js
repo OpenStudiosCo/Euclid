@@ -4,6 +4,9 @@
  * Single source of truth for Tools UI and integrations.
  */
 
+/** Highest colour count the tracer will honour. The Colours slider uses the same ceiling. */
+export const MAX_COLOURS = 256;
+
 /** @typedef {import('./image-adjust.js').HueSaturationLevels} HueSaturationLevels */
 
 /**
@@ -90,7 +93,8 @@ export const COLOUR_PRESETS = {
         removeBackground: 'auto',
     },
     posterise: {
-        numberofcolors: 6,
+        // Few flat colours, but enough to separate the main surfaces of a picture.
+        numberofcolors: 12,
         hue: 0,
         saturation: 0,
         levelsDark: 0,
@@ -104,13 +108,15 @@ export const COLOUR_PRESETS = {
         removeBackground: 'auto',
     },
     photoQuality: {
-        numberofcolors: 24,
+        // High enough that a photograph keeps its regions. Turd size stays
+        // small so those extra colours are not discarded as specks.
+        numberofcolors: 64,
         hue: 0,
         saturation: 0,
         levelsDark: 0,
         levelsCenter: 128,
         levelsLight: 255,
-        turdsize: 8,
+        turdsize: 2,
         alphamax: 1.0,
         optcurve: false,
         opttolerance: 0.2,

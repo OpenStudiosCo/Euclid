@@ -48,9 +48,10 @@ export function quantizeMedianCut(imgd, numberOfColors, transparent) {
     /** @type {{ pixels: typeof pixels }[]} */
     let boxes = [{ pixels }];
 
-    // Prefer chromatic splits. Stop early when remaining boxes are flat so a
-    // simple logo asked for 8 colours does not burn slots on anti-alias noise.
-    const MIN_SPLIT_RANGE = 18;
+    // Stop splitting flat boxes so a logo asked for a handful of colours does
+    // not spend them on anti-alias noise. A high count is asking for those
+    // finer separations, so the floor drops as the request rises.
+    const MIN_SPLIT_RANGE = n <= 16 ? 18 : Math.max(2, Math.round((18 * 16) / n));
 
     while (boxes.length < n) {
         let splitIndex = -1;
